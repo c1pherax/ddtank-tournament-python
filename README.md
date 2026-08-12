@@ -16,8 +16,6 @@
 
 É um site pra você criar torneios de DDTank. Você cadastra os jogadores, aperta um botão e o sistema monta a chave de mata-mata sozinho. Depois é só ir clicando no vencedor de cada partida até descobrir o campeão.
 
-Tudo bonitinho, com tema escuro e efeitos de vidro (aquele estilo iOS).
-
 ---
 
 ## O que dá pra fazer?
