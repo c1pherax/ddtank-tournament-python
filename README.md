@@ -2,7 +2,7 @@
 
 # 🏆 DDTank Tournament Manager
 
-*Sistema pra organizar torneios de DDTank.*
+*Sistema para organizar torneios de DDTank.*
 
 [![Python](https://img.shields.io/badge/Python-3.12-blue?style=flat-square&logo=python)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com)
