@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Torneios - DDTank Tournament{% endblock %}
+{% block content %}
+<div class="page-header fade-in">
+    <div class="header-content">
+        <h1>Torneios <span class="gradient-text">DDTank</span></h1>
+        <p class="subtitle">Gerencie seus torneios de mata-mata com estilo</p>
+    </div>
+</div>
+
+<div class="filters fade-in delay-1">
+    <a href="/tournaments/view" class="filter-pill {% if filter_status == None %}active{% endif %}">
+        <span class="pill-dot"></span> Todos
+    </a>
+    <a href="/tournaments/view?status=open" class="filter-pill {% if filter_status == 'open' %}active{% endif %}">
+        <span class="pill-dot green"></span> Abertos
+    </a>
+    <a href="/tournaments/view?status=ongoing" class="filter-pill {% if filter_status == 'ongoing' %}active{% endif %}">
+        <span class="pill-dot yellow"></span> Em Andamento
+    </a>
+    <a href="/tournaments/view?status=finished" class="filter-pill {% if filter_status == 'finished' %}active{% endif %}">
+        <span class="pill-dot blue"></span> Finalizados
+    </a>
+</div>
+
+{% if tournaments %}
+<div class="tournament-grid">
+    {% for t in tournaments %}
+    <div class="tournament-card glass slide-up" style="animation-delay: {{ loop.index * 0.08 }}s">
+        <div class="card-glow"></div>
+        <div class="card-header">
+            <span class="status-badge status-{{ t.status }}">
+                <span class="status-dot"></span>{{ t.status }}
+            </span>
+            <span class="player-count">
+                <span class="count-icon">👥</span>
+                {{ t.players|length }}/{{ t.max_players }}
+            </span>
+        </div>
+        <h3 class="card-title"><a href="/tournaments/view/{{ t.id }}">{{ t.name }}</a></h3>
+        {% if t.description %}
+        <p class="card-description">{{ t.description }}</p>
+        {% endif %}
+        {% if t.prize %}
+        <div class="prize-badge">
+            <span class="prize-icon">🏆</span>
+            <span>{{ t.prize }}</span>
+        </div>
+        {% endif %}
+        <div class="card-footer">
+            <span class="date">
+                <span class="date-icon">📅</span>
+                {% if t.scheduled_at %}
+                    {{ t.scheduled_at.strftime('%d/%m/%Y %H:%M') }}
+                {% else %}
+                    Sem data definida
+                {% endif %}
+            </span>
+            <a href="/tournaments/view/{{ t.id }}" class="btn-arrow">
+                Ver detalhes <span class="arrow">→</span>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state fade-in">
+    <div class="empty-icon">🏆</div>
+    <h2>Nenhum torneio encontrado</h2>
+    <p>Crie seu primeiro torneio e comece a competir!</p>
+    <a href="/tournaments/view/new" class="btn-glow btn-large">Criar primeiro torneio</a>
+</div>
+{% endif %}
+{% endblock %}

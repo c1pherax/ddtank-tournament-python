@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{% if mode == 'edit' %}Editar{% else %}Novo{% endif %} Torneio - DDTank Tournament{% endblock %}
+{% block content %}
+<div class="page-header fade-in">
+    <div class="header-breadcrumb">
+        <a href="/tournaments/view">← Torneios</a>
+    </div>
+    <div class="header-content">
+        <h1>{% if mode == 'edit' %}✏️ Editar{% else %}➕ Criar{% endif %} <span class="gradient-text">Torneio</span></h1>
+    </div>
+</div>
+
+<div class="form-container glass slide-up">
+    <form 
+        action="{% if mode == 'edit' %}/tournaments/view/{{ tournament.id }}/edit{% else %}/tournaments/view/new{% endif %}" 
+        method="post" 
+        class="form-stack"
+    >
+        <div class="form-group">
+            <label>Nome do Torneio <span class="required">*</span></label>
+            <input type="text" name="name" required 
+                value="{% if tournament %}{{ tournament.name }}{% endif %}"
+                placeholder="Ex: Torneio de Verão 2026">
+        </div>
+
+        <div class="form-group">
+            <label>Descrição</label>
+            <textarea name="description" rows="3" placeholder="Detalhes sobre o torneio...">{% if tournament and tournament.description %}{{ tournament.description }}{% endif %}</textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Máximo de Jogadores</label>
+                <input type="number" name="max_players" min="2" max="128"
+                    value="{% if tournament %}{{ tournament.max_players }}{% else %}32{% endif %}">
+            </div>
+
+            <div class="form-group">
+                <label>Prêmio</label>
+                <input type="text" name="prize"
+                    value="{% if tournament and tournament.prize %}{{ tournament.prize }}{% endif %}"
+                    placeholder="Ex: 1000 moedas">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Data do Torneio</label>
+            <input type="datetime-local" name="scheduled_at"
+                value="{% if tournament and tournament.scheduled_at %}{{ tournament.scheduled_at.strftime('%Y-%m-%dT%H:%M') }}{% endif %}">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-glow btn-large">
+                <span>{% if mode == 'edit' %}💾{% else %}✨{% endif %}</span>
+                {% if mode == 'edit' %}Salvar Alterações{% else %}Criar Torneio{% endif %}
+            </button>
+            <a href="/tournaments/view" class="btn-glass">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

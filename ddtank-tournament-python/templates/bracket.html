@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Bracket - {{ tournament.name }}{% endblock %}
+{% block content %}
+<div class="page-header fade-in">
+    <div class="header-breadcrumb">
+        <a href="/tournaments/view/{{ tournament.id }}">← {{ tournament.name }}</a>
+    </div>
+    <div class="header-content">
+        <h1>⚔️ <span class="gradient-text">Chave de Mata-Mata</span></h1>
+        <span class="status-badge status-{{ tournament.status }} large">
+            <span class="status-dot"></span>{{ tournament.status }}
+        </span>
+    </div>
+</div>
+
+{% if champion %}
+<div class="champion-banner glass slide-up">
+    <div class="champion-crown">👑</div>
+    <div class="champion-text">
+        <span class="champion-label">Campeão</span>
+        <span class="champion-name">{{ champion.nickname }}</span>
+        <span class="champion-meta">{{ champion.server }} {% if champion.level %}| Level {{ champion.level }}{% endif %}</span>
+    </div>
+</div>
+{% endif %}
+
+<div class="bracket-wrapper">
+    {% for round_num in rounds|sort %}
+    <div class="bracket-round slide-up" style="animation-delay: {{ loop.index * 0.15 }}s">
+        <h3 class="round-title">
+            {% if rounds|length == 1 %}
+                🏆 Final
+            {% elif round_num == rounds|length %}
+                🏆 Final
+            {% elif round_num == rounds|length - 1 %}
+                ⚔️ Semifinal
+            {% elif round_num == rounds|length - 2 %}
+                🎯 Quartas de Final
+            {% else %}
+                Rodada {{ round_num }}
+            {% endif %}
+        </h3>
+        <div class="matches">
+            {% for match in rounds[round_num]|sort(attribute='position') %}
+            <div class="match-card glass {% if match.status == 'finished' %}finished{% endif %}">
+                <div class="match-number">#{{ match.position }}</div>
+                <div class="match-players">
+                    <!-- Player A -->
+                    <div class="match-player {% if match.winner_id == match.player_a_id %}winner{% endif %}">
+                        <div class="player-avatar-small">
+                            {% if match.player_a %}
+                                {{ match.player_a.nickname[0]|upper }}
+                            {% else %}
+                                ?
+                            {% endif %}
+                        </div>
+                        <div class="match-player-info">
+                            <span class="match-player-name">
+                                {% if match.player_a %}
+                                    {{ match.player_a.nickname }}
+                                {% else %}
+                                    <em>Bye</em>
+                                {% endif %}
+                            </span>
+                            {% if match.player_a %}
+                            <span class="match-player-meta">{{ match.player_a.server }} {% if match.player_a.level %}Lv{{ match.player_a.level }}{% endif %}</span>
+                            {% endif %}
+                        </div>
+                        {% if match.winner_id == match.player_a_id %}
+                        <span class="winner-mark">✓</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="vs-line">
+                        <span class="vs-text">VS</span>
+                    </div>
+
+                    <!-- Player B -->
+                    <div class="match-player {% if match.winner_id == match.player_b_id %}winner{% endif %}">
+                        <div class="player-avatar-small">
+                            {% if match.player_b %}
+                                {{ match.player_b.nickname[0]|upper }}
+                            {% else %}
+                                ?
+                            {% endif %}
+                        </div>
+                        <div class="match-player-info">
+                            <span class="match-player-name">
+                                {% if match.player_b %}
+                                    {{ match.player_b.nickname }}
+                                {% else %}
+                                    <em>Bye</em>
+                                {% endif %}
+                            </span>
+                            {% if match.player_b %}
+                            <span class="match-player-meta">{{ match.player_b.server }} {% if match.player_b.level %}Lv{{ match.player_b.level }}{% endif %}</span>
+                            {% endif %}
+                        </div>
+                        {% if match.winner_id == match.player_b_id %}
+                        <span class="winner-mark">✓</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="match-actions">
+                    {% if match.status == "pending" and match.player_a and match.player_b %}
+                    <form action="/matches/{{ match.id }}/winner/{{ match.player_a_id }}/redirect" method="post">
+                        <button type="submit" class="btn-win">
+                            <span>🏆</span> {{ match.player_a.nickname }}
+                        </button>
+                    </form>
+                    <form action="/matches/{{ match.id }}/winner/{{ match.player_b_id }}/redirect" method="post">
+                        <button type="submit" class="btn-win alt">
+                            <span>🏆</span> {{ match.player_b.nickname }}
+                        </button>
+                    </form>
+                    {% elif match.status == "finished" %}
+                    <div class="winner-display">
+                        <span class="winner-trophy">🏆</span>
+                        <span class="winner-name">
+                            {% if match.winner %}
+                                {{ match.winner.nickname }}
+                            {% else %}
+                                Bye
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="actions-bar">
+    <a href="/tournaments/view/{{ tournament.id }}" class="btn-glass">
+        <span>←</span> Voltar ao torneio
+    </a>
+</div>
+{% endblock %}

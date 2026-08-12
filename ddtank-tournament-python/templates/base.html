@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DDTank Tournament Manager{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Background animated orbs -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <nav class="navbar glass">
+        <div class="container">
+            <a href="/tournaments/view" class="logo">
+                <span class="logo-icon">🏆</span>
+                <span class="logo-text">DDTank<span class="logo-accent">Tournament</span></span>
+            </a>
+            <div class="nav-links">
+                <a href="/tournaments/view" class="nav-link">
+                    <span class="nav-icon">📋</span>
+                    <span>Torneios</span>
+                </a>
+                <a href="/tournaments/view?status=open" class="nav-link">
+                    <span class="nav-icon">🟢</span>
+                    <span>Abertos</span>
+                </a>
+                <a href="/tournaments/view/new" class="btn-glow">
+                    <span>+ Criar Torneio</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer glass">
+        <div class="container">
+            <p>DDTank Tournament Manager <span class="heart">💜</span> Python Edition</p>
+        </div>
+    </footer>
+</body>
+</html>

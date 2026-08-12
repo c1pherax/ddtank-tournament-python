@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}{{ tournament.name }} - DDTank Tournament{% endblock %}
+{% block content %}
+<div class="page-header fade-in">
+    <div class="header-breadcrumb">
+        <a href="/tournaments/view">← Torneios</a>
+    </div>
+    <div class="header-content">
+        <h1>{{ tournament.name }}</h1>
+        <span class="status-badge status-{{ tournament.status }} large">
+            <span class="status-dot"></span>{{ tournament.status }}
+        </span>
+    </div>
+</div>
+
+<div class="tournament-detail">
+    <!-- INFO -->
+    <div class="detail-section glass slide-up">
+        <div class="section-header">
+            <span class="section-icon">📋</span>
+            <h2>Informações</h2>
+        </div>
+        <div class="info-grid">
+            {% if tournament.description %}
+            <div class="info-item">
+                <span class="info-label">Descrição</span>
+                <span class="info-value">{{ tournament.description }}</span>
+            </div>
+            {% endif %}
+            {% if tournament.prize %}
+            <div class="info-item">
+                <span class="info-label">Prêmio</span>
+                <span class="info-value prize">{{ tournament.prize }}</span>
+            </div>
+            {% endif %}
+            <div class="info-item">
+                <span class="info-label">Máx. Jogadores</span>
+                <span class="info-value">{{ tournament.max_players }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Data</span>
+                <span class="info-value">
+                    {% if tournament.scheduled_at %}
+                        {{ tournament.scheduled_at.strftime('%d/%m/%Y %H:%M') }}
+                    {% else %}
+                        Não definida
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <div class="actions-row">
+            <a href="/tournaments/view/{{ tournament.id }}/edit" class="btn-glass">
+                <span>✏️</span> Editar
+            </a>
+            {% if tournament.status == "open" %}
+            <form action="/tournaments/view/{{ tournament.id }}/cancel" method="post" style="display:inline">
+                <button type="submit" class="btn-glass danger">
+                    <span>❌</span> Cancelar
+                </button>
+            </form>
+            {% endif %}
+            {% if tournament.status == "ongoing" %}
+            <form action="/tournaments/view/{{ tournament.id }}/finish" method="post" style="display:inline">
+                <button type="submit" class="btn-glass success">
+                    <span>🏁</span> Finalizar
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- INSCREVER JOGADOR -->
+    {% if tournament.status == "open" %}
+    <div class="detail-section glass slide-up delay-1">
+        <div class="section-header">
+            <span class="section-icon">📝</span>
+            <h2>Inscrever Jogador</h2>
+        </div>
+        <form action="/players/tournament/{{ tournament.id }}/register" method="post" class="form-grid">
+            <div class="form-group">
+                <label>Nickname <span class="required">*</span></label>
+                <input type="text" name="nickname" required minlength="2" maxlength="30" placeholder="Nome do personagem">
+            </div>
+            <div class="form-group">
+                <label>Servidor <span class="required">*</span></label>
+                <input type="text" name="server" required placeholder="Ex: S1, S2">
+            </div>
+            <div class="form-group">
+                <label>Level</label>
+                <input type="number" name="level" min="1" max="100" placeholder="1-100">
+            </div>
+            <div class="form-group">
+                <label>Power</label>
+                <input type="number" name="power" min="0" placeholder="Poder de combate">
+            </div>
+            <div class="form-group">
+                <label>Guilda</label>
+                <input type="text" name="guild" placeholder="Nome da guilda">
+            </div>
+            <div class="form-group full-width">
+                <button type="submit" class="btn-glow">
+                    <span>✨</span> Inscrever Jogador
+                </button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- JOGADORES -->
+    <div class="detail-section glass slide-up delay-2">
+        <div class="section-header">
+            <span class="section-icon">👥</span>
+            <h2>Jogadores Inscritos <span class="count">{{ tournament.players|length }}</span></h2>
+        </div>
+        {% if tournament.players %}
+        <div class="players-grid">
+            {% for p in tournament.players %}
+            <div class="player-card">
+                <div class="player-avatar">{{ p.nickname[0]|upper }}</div>
+                <div class="player-info">
+                    <span class="player-name">{{ p.nickname }}</span>
+                    <span class="player-meta">{{ p.server }} {% if p.level %}| Lv{{ p.level }}{% endif %}</span>
+                </div>
+                {% if tournament.status == "open" %}
+                <form action="/players/{{ p.id }}" method="post" class="player-action">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn-icon" title="Remover">🗑️</button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-mini">
+            <span class="empty-emoji">🎮</span>
+            <p>Nenhum jogador inscrito ainda</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- INICIAR TORNEIO -->
+    {% if tournament.status == "open" and tournament.players|length >= 2 %}
+    <div class="detail-section glass slide-up delay-3 center">
+        <form action="/tournaments/view/{{ tournament.id }}/start" method="post">
+            <button type="submit" class="btn-glow btn-large pulse">
+                <span>🚀</span> Iniciar Torneio e Gerar Chave
+            </button>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- BRACKET -->
+    {% if tournament.status in ["ongoing", "finished"] %}
+    <div class="detail-section glass slide-up delay-3">
+        <div class="section-header">
+            <span class="section-icon">⚔️</span>
+            <h2>Chave de Mata-Mata</h2>
+        </div>
+        <a href="/matches/tournament/{{ tournament.id }}/bracket" class="btn-glow">
+            <span>👁️</span> Ver Bracket Completo
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
