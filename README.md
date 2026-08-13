@@ -237,6 +237,6 @@ MIT — use à vontade.
 
 <div align="center">
 
-Feito com 💜 por **c1pherax**
+Feito com 💜 por **c1pheraxx**
 
 </div>
